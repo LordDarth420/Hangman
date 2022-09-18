@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.Reflection;
+using System.IO;
 
 namespace Hangman
 {
@@ -23,6 +23,8 @@ namespace Hangman
         private List<char> usedLetters;
         private Dictionary<int, int> _scoreBoard;
         private Stickman stickMan;
+        
+        //constructor used for twoPlayerMode
         public Game(int currentPlayer, string word, Dictionary<int, int> scoreBoard)
         {
             twoPlayerMode = true;
@@ -48,28 +50,54 @@ namespace Hangman
                 player2ScoreBoardLabel.Font = font;
             }
 
-            stickMan = new Stickman();
-            var myScreen = Screen.FromControl(this);
-            var mySecondScreen = Screen.AllScreens.FirstOrDefault(s => !s.Equals(myScreen)) ?? myScreen;
-
-            stickMan.Left = mySecondScreen.Bounds.Left;
-            stickMan.Top = mySecondScreen.Bounds.Top;
-            stickMan.Location = new Point(1050, 215);
-
-            this.Location = new Point(10, 160);
-            stickMan.Show();
+            StartHanging();
         }
 
+        //constructor for singleplayer
         public Game()
         {
-            //get word from database of some kind
+            //get word from database of some kind - text file
             InitializeComponent();
             twoPlayerMode = false;
+            usedLetters = new List<char>();
+            stickMan = new Stickman();
+
+            scoreBoardPanel.Visible = false;
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "думички.txt");
+
+            if(!File.Exists(filePath))
+            {
+                MessageBox.Show("Не мога да намеря файла, в който се съдържат думите. Съжалявам. :(", "думички.txt липсва", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Hide();
+                new Intro().Show();
+            }
+            else if(IsTextFileEmpty(filePath))
+            {
+                MessageBox.Show("Няма думи в файла думички.txt", "думички.txt липсва", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Hide();
+                new Intro().Show();
+            }
+            else
+            {
+                int lineCount = 0;
+                using (var reader = File.OpenText(filePath))
+                {
+                    while (reader.ReadLine() != null)
+                    {
+                        lineCount++;
+                    }
+                }
+                int randomLineNum = new Random().Next(1, lineCount);
+                _word = File.ReadLines(filePath).ElementAtOrDefault(randomLineNum - 1).ToString();
+                DisplayWordOnScreen();
+                StartHanging();
+            }
+
+            
 
         }
         private void Game_FormClosing(object sender, FormClosingEventArgs e)
         {
-
             Intro intro = new Intro();
             intro.Show();
             stickMan.Hide();
@@ -266,13 +294,14 @@ namespace Hangman
             switch (dialog)
             {
                 case DialogResult.Yes:
-                    Game newGame = new Game();
-                    newGame.Show();
                     foreach (Form f in Application.OpenForms)
                     {
                         f.Hide();
                     }
+                    Game newGame = new Game();
+                    newGame.Show();
                     break;
+                    
                 case DialogResult.No:
                     foreach (Form f in Application.OpenForms)
                     {
@@ -357,12 +386,13 @@ namespace Hangman
                 switch(dialog)
                 {
                     case DialogResult.Yes:
-                        Game newGame = new Game();
-                        newGame.Show();
+                        
                         foreach (Form f in Application.OpenForms)
                         {
                             f.Hide();
                         }
+                        Game newGame = new Game();
+                        newGame.Show();
                         break;
                     case DialogResult.No:
                         foreach (Form f in Application.OpenForms)
@@ -372,6 +402,14 @@ namespace Hangman
                         Intro intro = new Intro();
                         intro.Show();
                         break;
+                }
+            }
+            else
+            {
+                if (!usedLetters.Contains(letter))
+                {
+                    usedLetters.Add(letter);
+                    usedLettersBox.Text = string.Join(", ", usedLetters);
                 }
             }
 
@@ -386,5 +424,33 @@ namespace Hangman
         }
 
 
+
+
+        private static bool IsTextFileEmpty(string fileName)
+        {
+            var info = new FileInfo(fileName);
+            if (info.Length == 0)
+                return true;
+
+            if (info.Length < 6)
+            {
+                var content = File.ReadAllText(fileName);
+                return content.Length == 0;
+            }
+            return false;
+        }
+        private void StartHanging()
+        {
+            stickMan = new Stickman();
+            var myScreen = Screen.FromControl(this);
+            var mySecondScreen = Screen.AllScreens.FirstOrDefault(s => !s.Equals(myScreen)) ?? myScreen;
+
+            stickMan.Left = mySecondScreen.Bounds.Left;
+            stickMan.Top = mySecondScreen.Bounds.Top;
+            stickMan.Location = new Point(1050, 215);
+
+            this.Location = new Point(10, 160);
+            stickMan.Show();
+        }
     }
 }
