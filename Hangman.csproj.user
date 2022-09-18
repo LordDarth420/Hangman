@@ -10,10 +10,10 @@
     <Compile Update="Menus\Intro.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Stickman.cs">
+    <Compile Update="Game\Stickman.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="WordPrompt.cs">
+    <Compile Update="Menus\WordPrompt.cs">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>

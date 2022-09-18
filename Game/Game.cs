@@ -47,7 +47,7 @@ namespace Hangman
             {
                 player2ScoreBoardLabel.Font = font;
             }
-            
+
             stickMan = new Stickman();
             var myScreen = Screen.FromControl(this);
             var mySecondScreen = Screen.AllScreens.FirstOrDefault(s => !s.Equals(myScreen)) ?? myScreen;
@@ -59,7 +59,7 @@ namespace Hangman
             this.Location = new Point(10, 160);
             stickMan.Show();
         }
-        
+
         public Game()
         {
             //get word from database of some kind
@@ -69,7 +69,7 @@ namespace Hangman
         }
         private void Game_FormClosing(object sender, FormClosingEventArgs e)
         {
-            
+
             Intro intro = new Intro();
             intro.Show();
             stickMan.Hide();
@@ -161,10 +161,10 @@ namespace Hangman
             int currentPos = 0;
             //input letters
             for (int i = 0; i < partsOfWord.Count; i++)
-            {          
-                for(int j = 0; j < partsOfWord[i].Length; j++)
+            {
+                for (int j = 0; j < partsOfWord[i].Length; j++)
                 {
-                    if(j == 0 || partsOfWord[i][j] == partsOfWord[i][0] || j == partsOfWord[i].Length - 1)
+                    if (j == 0 || partsOfWord[i][j] == partsOfWord[i][0] || j == partsOfWord[i].Length - 1)
                     {
                         labels[currentPos++].Text = partsOfWord[i][j].ToString();
                     }
@@ -182,156 +182,209 @@ namespace Hangman
         }
         private void Guess(object sender, EventArgs e)
         {
-            //todo: needs refactoring asap
-            //method is too big, needs to be divided into two methods for win or lose
+            char letter;
             try
             {
-                char letter = char.Parse(textBox1.Text.ToString());
+                letter = char.Parse(textBox1.Text.ToString());
+            }
+            catch (FormatException)
+            {
+                return;
+            }
 
-                if (_word.Contains(letter))
+            if (_word.Contains(letter))
+            {
+                for (int i = 0; i < _word.Length; i++)
                 {
-                    for (int i = 0; i < _word.Length; i++)
+                    if (letter == _word[i])
                     {
-                        if (letter == _word[i])
-                        {
-                            labels[i].Text = _word[i].ToString();
-                        }
-
-                        //todo: play some sound for guessing
-                    }
-                    textBox1.Text = "";
-                }
-                else
-                {
-                    bool playerLost = false;
-                    //todo: draw one figure for incorrect guess
-                    //do it in a separate window
-                    if (!usedLetters.Contains(letter))
-                    {
-                        playerLost = stickMan.Penalize();
-                    }
-                    if (playerLost)
-                    {
-                        if (twoPlayerMode)
-                        {
-                            DialogResult dialog = new DialogResult();
-                            if (_currentPlayer == 1)
-                            {
-                                dialog = MessageBox.Show("Играч 1, ти не позна думата! Продължаване на играта?", "Провал!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-                            }
-                            else
-                            {
-                                dialog = MessageBox.Show("Играч 2, ти не позна думата! Продължаване на играта?", "Провал!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-                            }
-                            if (dialog == DialogResult.Yes)
-                            {
-                                if (_currentPlayer == 1) { _currentPlayer = 2; _scoreBoard[2]++; }
-                                else { _currentPlayer = 1; _scoreBoard[1]++; }
-                                WordPrompt prompt = new WordPrompt(_currentPlayer, _scoreBoard);
-                                stickMan.Hide();
-                                Hide();
-                                prompt.Show();
-                            }
-                            else
-                            {
-                                Intro intro = new Intro();
-                                intro.Show();
-                                stickMan.Hide();
-                                this.Hide();
-                            }
-                        }
-                        else
-                        {
-                            DialogResult dialog = MessageBox.Show("Ти не позна думата! Продължаване на играта?", "Провал!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-                            if (dialog == DialogResult.Yes)
-                            {
-                                Hide();
-                                Game newGame = new Game();
-                                newGame.Show();
-                                stickMan.Hide();
-                            }
-                            else
-                            {
-                                Intro intro = new Intro();
-                                intro.Show();
-                                this.Hide();
-                                stickMan.Hide();
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (!usedLetters.Contains(letter))
-                        {
-                            usedLetters.Add(letter);
-                            usedLettersBox.Text = string.Join(", ", usedLetters);
-                        }
-                    }
-                }
-                if (labels.Where(l => l.Text.Equals("?")).ToList().Count == 0)
-                {
-                    if (twoPlayerMode)
-                    {
-                        DialogResult dialog = new DialogResult();
-                        if (_currentPlayer == 1)
-                        {
-                            dialog = MessageBox.Show("Играч 1, ти позна думата! Продължаване на играта?", "Ти успя!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-                        }
-                        else
-                        {
-                            dialog = MessageBox.Show("Играч 2, ти позна думата! Продължаване на играта?", "Ти успя!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-                        }
-                        if (dialog == DialogResult.Yes)
-                        {
-                            if (_currentPlayer == 1) { _currentPlayer = 2; _scoreBoard[1]++; }
-                            else { _currentPlayer = 1; _scoreBoard[2]++; }
-                            WordPrompt prompt = new WordPrompt(_currentPlayer, _scoreBoard);
-                            Hide();
-                            stickMan.Hide();
-                            prompt.Show();
-                        }
-                        else
-                        {
-                            Intro intro = new Intro();
-                            intro.Show();
-                            stickMan.Hide();
-                            this.Hide();
-                        }
-                    }
-                    else
-                    {
-                        DialogResult dialog = MessageBox.Show("Ти позна думата! Продължаване на играта?", "Ти успя!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-                        if (dialog == DialogResult.Yes)                                                         
-                        {
-                            Hide();
-                            Game newGame = new Game();
-                            newGame.Show();
-                        }
-                        else
-                        {
-                            Intro intro = new Intro();
-                            intro.Show();
-                            this.Hide();
-                        }
+                        labels[i].Text = _word[i].ToString();
                     }
                 }
                 textBox1.Text = "";
+
+                bool guessedAllLetters = labels.Where(l => l.Text.Equals("?")).ToArray().Length == 0;
+                if (guessedAllLetters)
+                {
+                    GuessedAllLetters(twoPlayerMode);
+                }
             }
-            catch(FormatException) //catch if nothing is entered
+            else
             {
-                return; //do nothing
+                WrongLetter(letter, twoPlayerMode);
             }
-            
+            textBox1.Text = "";
         }
-        private void EnterPress(object sender, KeyEventArgs e)
+
+        private void GuessedAllLetters(bool twoPlayerMode)
+        {
+            if (twoPlayerMode) { GuessedAllLettersTwoPlayerMode(); }
+            else { GuessedAllLettersAIMode(); }
+        }
+
+        private void GuessedAllLettersTwoPlayerMode()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            switch(_currentPlayer)
+            {
+                case 1:
+                    sb.Append("Играч 1, ");
+                    break;
+                case 2:
+                    sb.Append("Играч 2, ");
+                    break;
+            }
+            sb.Append("ти позна думата! Продължаване на играта?");
+            DialogResult dialog = MessageBox.Show(sb.ToString(), "Успех!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+            switch (dialog)
+            {
+                case DialogResult.Yes:
+                    if (_currentPlayer == 1) { _currentPlayer = 2; _scoreBoard[1]++; }
+                    else { _currentPlayer = 1; _scoreBoard[2]++; }
+                    WordPrompt prompt = new WordPrompt(_currentPlayer, _scoreBoard);
+                    foreach (Form f in Application.OpenForms)
+                    {
+                        f.Hide();
+                    }
+                    prompt.Show();
+                    break;
+                case DialogResult.No:
+                    foreach (Form f in Application.OpenForms)
+                    {
+                        f.Hide();
+                    }
+                    Intro intro = new Intro();
+                    intro.Show();
+                    break;
+            }
+        }
+        private void GuessedAllLettersAIMode()
+        {
+            DialogResult dialog = MessageBox.Show("Ти позна думата! Нова дума?", "Успех", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+            switch (dialog)
+            {
+                case DialogResult.Yes:
+                    Game newGame = new Game();
+                    newGame.Show();
+                    foreach (Form f in Application.OpenForms)
+                    {
+                        f.Hide();
+                    }
+                    break;
+                case DialogResult.No:
+                    foreach (Form f in Application.OpenForms)
+                    {
+                        f.Hide();
+                    }
+                    Intro intro = new Intro();
+                    intro.Show();
+                    break;
+            }
+        }
+        private void WrongLetter(char letter, bool twoPlayerMode)
+        {
+            if (twoPlayerMode)
+            {
+                WrongLetterTwoPlayerMode(letter);
+            }
+            else
+            {
+                WrongLetterAIMode(letter);
+            }
+        }
         
+        private void WrongLetterTwoPlayerMode(char letter)
+        {
+            bool playerLost = stickMan.Penalize();
+
+            if(playerLost)
+            {
+                StringBuilder stringBuilder = new StringBuilder();
+
+                switch (_currentPlayer)
+                {
+                    case 1:
+                        stringBuilder.Append("Играч 1, ");
+                        break;
+                    case 2:
+                        stringBuilder.Append("Играч 2, ");
+                        break;
+                }
+                stringBuilder.Append("ти позна думата! Продължаване на играта?");
+                DialogResult dialog = MessageBox.Show(stringBuilder.ToString(), "Успех!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+                switch (dialog)
+                {
+                    case DialogResult.Yes:
+                        if (_currentPlayer == 1) { _currentPlayer = 2; _scoreBoard[2]++; }
+                        else { _currentPlayer = 1; _scoreBoard[1]++; }
+                        WordPrompt prompt = new WordPrompt(_currentPlayer, _scoreBoard);
+                        foreach(Form f in Application.OpenForms)
+                        {
+                            f.Hide();
+                        }
+                        prompt.Show();
+                        break;
+                    case DialogResult.No:
+                        foreach (Form f in Application.OpenForms)
+                        {
+                            f.Hide();
+                        }
+                        Intro intro = new Intro();
+                        intro.Show();
+                        break;
+                }
+            }
+            else
+            {
+                if(!usedLetters.Contains(letter))
+                {
+                    usedLetters.Add(letter);
+                    usedLettersBox.Text = string.Join(", ", usedLetters);
+                }
+            }
+        }
+        
+        private void WrongLetterAIMode(char letter)
+        {
+            bool playerLost = stickMan.Penalize();
+
+            if (playerLost)
+            {
+                DialogResult dialog = MessageBox.Show("Ти загуби! Нов опит?", "Провал", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                switch(dialog)
+                {
+                    case DialogResult.Yes:
+                        Game newGame = new Game();
+                        newGame.Show();
+                        foreach (Form f in Application.OpenForms)
+                        {
+                            f.Hide();
+                        }
+                        break;
+                    case DialogResult.No:
+                        foreach (Form f in Application.OpenForms)
+                        {
+                            f.Hide();
+                        }
+                        Intro intro = new Intro();
+                        intro.Show();
+                        break;
+                }
+            }
+
+
+        }
+        private void EnterPress(object sender, KeyEventArgs e)  
         {
             if(e.KeyData == Keys.Enter)
             {
                 Guess(this, new EventArgs());
             }
-
         }
+
 
     }
 }
