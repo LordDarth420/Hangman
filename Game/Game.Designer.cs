@@ -44,6 +44,7 @@ namespace Hangman
             this.usedLettersLabel = new System.Windows.Forms.Label();
             this.usedLettersBox = new System.Windows.Forms.TextBox();
             this.scoreBoardPanel = new System.Windows.Forms.Panel();
+            this.knowTheWordButton = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.scoreBoardPanel.SuspendLayout();
@@ -89,7 +90,6 @@ namespace Hangman
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 23);
             this.textBox1.TabIndex = 2;
-            this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.EnterPress);
             // 
             // wordGuessLabel
             // 
@@ -169,7 +169,7 @@ namespace Hangman
             // usedLettersLabel
             // 
             this.usedLettersLabel.AutoSize = true;
-            this.usedLettersLabel.Location = new System.Drawing.Point(682, 336);
+            this.usedLettersLabel.Location = new System.Drawing.Point(563, 336);
             this.usedLettersLabel.Name = "usedLettersLabel";
             this.usedLettersLabel.Size = new System.Drawing.Size(111, 15);
             this.usedLettersLabel.TabIndex = 9;
@@ -177,7 +177,7 @@ namespace Hangman
             // 
             // usedLettersBox
             // 
-            this.usedLettersBox.Location = new System.Drawing.Point(682, 362);
+            this.usedLettersBox.Location = new System.Drawing.Point(563, 362);
             this.usedLettersBox.Multiline = true;
             this.usedLettersBox.Name = "usedLettersBox";
             this.usedLettersBox.ReadOnly = true;
@@ -196,11 +196,23 @@ namespace Hangman
             this.scoreBoardPanel.Size = new System.Drawing.Size(291, 96);
             this.scoreBoardPanel.TabIndex = 11;
             // 
+            // knowTheWordButton
+            // 
+            this.knowTheWordButton.Location = new System.Drawing.Point(712, 379);
+            this.knowTheWordButton.Name = "knowTheWordButton";
+            this.knowTheWordButton.Size = new System.Drawing.Size(112, 23);
+            this.knowTheWordButton.TabIndex = 12;
+            this.knowTheWordButton.Text = "Знам думата!";
+            this.knowTheWordButton.UseVisualStyleBackColor = true;
+            this.knowTheWordButton.Click += new System.EventHandler(this.OpenGuessWindow);
+            // 
             // Game
             // 
+            this.AcceptButton = this.guessButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(998, 447);
+            this.Controls.Add(this.knowTheWordButton);
             this.Controls.Add(this.scoreBoardPanel);
             this.Controls.Add(this.usedLettersBox);
             this.Controls.Add(this.usedLettersLabel);
@@ -239,5 +251,6 @@ namespace Hangman
         private System.Windows.Forms.Label usedLettersLabel;
         private System.Windows.Forms.TextBox usedLettersBox;
         private System.Windows.Forms.Panel scoreBoardPanel;
+        private System.Windows.Forms.Button knowTheWordButton;
     }
 }

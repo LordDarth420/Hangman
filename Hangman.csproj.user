@@ -4,6 +4,9 @@
     <Compile Update="Game\Game.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Game\GuessWord.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Menus\OptionsPlayer.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -34,8 +34,7 @@ namespace Hangman
                 {
                     f.Hide();
                 }
-                Game game = new Game();
-                game.Show();
+                new Game().Show();
             }
             else
             {
