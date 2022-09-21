@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace Hangman
 {
-    public partial class OptionsPlayer : Form
+    public partial class Оptions : Form
     {
-        public OptionsPlayer()
+        public Оptions()
         {
             InitializeComponent();
         }

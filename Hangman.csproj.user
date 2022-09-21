@@ -7,7 +7,7 @@
     <Compile Update="Game\GuessWord.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Menus\OptionsPlayer.cs">
+    <Compile Update="Menus\Оptions.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Menus\Intro.cs">

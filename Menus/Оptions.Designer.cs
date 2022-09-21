@@ -1,7 +1,7 @@
 ﻿
 namespace Hangman
 {
-    partial class OptionsPlayer
+    partial class Оptions
     {
         /// <summary>
         /// Required designer variable.
