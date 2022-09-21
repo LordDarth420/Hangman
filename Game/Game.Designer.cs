@@ -221,10 +221,11 @@ namespace Hangman
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.panel1);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "Game";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            this.Text = "Hangman";
+            this.Text = "Бесеница";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Game_FormClosing);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();

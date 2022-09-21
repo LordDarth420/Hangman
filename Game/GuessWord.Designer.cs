@@ -29,6 +29,7 @@ namespace Hangman
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GuessWord));
             this.label1 = new System.Windows.Forms.Label();
             this.okButton = new System.Windows.Forms.Button();
             this.wordBox = new System.Windows.Forms.TextBox();
@@ -71,8 +72,9 @@ namespace Hangman
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.wordBox);
             this.Controls.Add(this.label1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "GuessWord";
-            this.Text = "GuessWord";
+            this.Text = "Знаеш ли думата?";
             this.ResumeLayout(false);
             this.PerformLayout();
 

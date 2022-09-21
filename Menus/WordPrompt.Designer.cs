@@ -29,6 +29,7 @@ namespace Hangman
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WordPrompt));
             this.label1 = new System.Windows.Forms.Label();
             this.wordBox = new System.Windows.Forms.TextBox();
             this.playerDisplay = new System.Windows.Forms.Label();
@@ -85,6 +86,7 @@ namespace Hangman
             this.Controls.Add(this.playerDisplay);
             this.Controls.Add(this.wordBox);
             this.Controls.Add(this.label1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "WordPrompt";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Дума";
