@@ -20,7 +20,7 @@ namespace Hangman
 
         private void startButton_Click(object sender, EventArgs e)
         {
-            OptionsPlayer options = new OptionsPlayer();
+            Оptions options = new Оptions();
             options.Show();
         }
         private void exitButton_Click(object sender, EventArgs e)

@@ -46,5 +46,9 @@ namespace Hangman
             }
             return lost;
         }
+        public void HangImmediately()
+        {
+            executionScreen.Image = Properties.Resources.dead;
+        }
     }
 }

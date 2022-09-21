@@ -18,6 +18,7 @@ C:\Users\Niki\source\repos\Hangman\obj\Debug\net5.0-windows\Hangman.pdb
 C:\Users\Niki\source\repos\Hangman\obj\Debug\net5.0-windows\Hangman.genruntimeconfig.cache
 C:\Users\Niki\source\repos\Hangman\obj\Debug\net5.0-windows\Hangman.Properties.Resources.resources
 C:\Users\Niki\source\repos\Hangman\obj\Debug\net5.0-windows\Hangman.Game.resources
-C:\Users\Niki\source\repos\Hangman\obj\Debug\net5.0-windows\Hangman.OptionsPlayer.resources
 C:\Users\Niki\source\repos\Hangman\obj\Debug\net5.0-windows\Hangman.WordPrompt.resources
 C:\Users\Niki\source\repos\Hangman\obj\Debug\net5.0-windows\Hangman.Stickman.resources
+C:\Users\Niki\source\repos\Hangman\obj\Debug\net5.0-windows\Hangman.GuessWord.resources
+C:\Users\Niki\source\repos\Hangman\obj\Debug\net5.0-windows\Hangman.Оptions.resources

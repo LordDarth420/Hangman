@@ -29,6 +29,7 @@ namespace Hangman
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Stickman));
             this.executionScreen = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.executionScreen)).BeginInit();
             this.SuspendLayout();
@@ -48,6 +49,7 @@ namespace Hangman
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(280, 355);
             this.Controls.Add(this.executionScreen);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Stickman";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Stickman";

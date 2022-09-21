@@ -10,10 +10,9 @@ using System.Windows.Forms;
 
 namespace Hangman
 {
-    public partial class OptionsPlayer : Form
+    public partial class Оptions : Form
     {
-        private bool isTwoPlayerSelected;
-        public OptionsPlayer()
+        public Оptions()
         {
             InitializeComponent();
         }
@@ -29,17 +28,14 @@ namespace Hangman
                 WordPrompt wordPrompt = new WordPrompt(1);
                 wordPrompt.Show();
             }
-            /*
             else if(onePlayer.Checked)
             {
                 foreach (Form f in Application.OpenForms)
                 {
                     f.Hide();
                 }
-                Game game = new Game();
-                game.Show();
+                new Game().Show();
             }
-            */
             else
             {
                 MessageBox.Show("Изберете режим на игра.", "Грешка", MessageBoxButtons.OK, MessageBoxIcon.Warning);

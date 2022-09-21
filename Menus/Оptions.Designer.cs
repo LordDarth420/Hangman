@@ -1,7 +1,7 @@
 ﻿
 namespace Hangman
 {
-    partial class OptionsPlayer
+    partial class Оptions
     {
         /// <summary>
         /// Required designer variable.
@@ -29,6 +29,7 @@ namespace Hangman
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Оptions));
             this.label1 = new System.Windows.Forms.Label();
             this.startButton = new System.Windows.Forms.Button();
             this.onePlayer = new System.Windows.Forms.RadioButton();
@@ -77,7 +78,7 @@ namespace Hangman
             this.twoPlayers.Text = "2 Играча";
             this.twoPlayers.UseVisualStyleBackColor = true;
             // 
-            // OptionsPlayer
+            // Оptions
             // 
             this.AcceptButton = this.startButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -87,7 +88,8 @@ namespace Hangman
             this.Controls.Add(this.onePlayer);
             this.Controls.Add(this.startButton);
             this.Controls.Add(this.label1);
-            this.Name = "OptionsPlayer";
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Name = "Оptions";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Опции";
             this.ResumeLayout(false);

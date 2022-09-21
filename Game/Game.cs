@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.Reflection;
+using System.IO;
 
 namespace Hangman
 {
@@ -23,21 +23,25 @@ namespace Hangman
         private List<char> usedLetters;
         private Dictionary<int, int> _scoreBoard;
         private Stickman stickMan;
+        private GuessWord guessWindow;
+
+        //constructor used for twoPlayerMode
         public Game(int currentPlayer, string word, Dictionary<int, int> scoreBoard)
         {
             twoPlayerMode = true;
             InitializeComponent();
+            _word = null;
 
-
+            
             usedLetters = new List<char>();
             _word = word;
             _scoreBoard = scoreBoard;
             _currentPlayer = currentPlayer;
-
+            
             player1Score.Text = scoreBoard.ElementAt(0).Value.ToString();
             player2Score.Text = scoreBoard.ElementAt(1).Value.ToString();
             DisplayWordOnScreen();
-
+            guessWindow = new GuessWord();
             Font font = new Font("Seque UI", 14, FontStyle.Bold);
             if (_currentPlayer == 1)
             {
@@ -48,28 +52,53 @@ namespace Hangman
                 player2ScoreBoardLabel.Font = font;
             }
 
-            stickMan = new Stickman();
-            var myScreen = Screen.FromControl(this);
-            var mySecondScreen = Screen.AllScreens.FirstOrDefault(s => !s.Equals(myScreen)) ?? myScreen;
-
-            stickMan.Left = mySecondScreen.Bounds.Left;
-            stickMan.Top = mySecondScreen.Bounds.Top;
-            stickMan.Location = new Point(1050, 215);
-
-            this.Location = new Point(10, 160);
-            stickMan.Show();
+            StartHanging();
         }
 
+        //constructor for singleplayer
         public Game()
         {
-            //get word from database of some kind
-            InitializeComponent();
-            twoPlayerMode = false;
+            //get word from database of some kind - text file
 
+            InitializeComponent();
+            _word = null;
+            twoPlayerMode = false;
+            usedLetters = new List<char>();
+            stickMan = new Stickman();
+            guessWindow = new GuessWord();
+            scoreBoardPanel.Visible = false;
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "думички.txt");
+
+            if (!File.Exists(filePath))
+            {
+                MessageBox.Show("Не мога да намеря файла, в който се съдържат думите. Съжалявам. :(", "думички.txt липсва", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Hide();
+                new Intro().Show();
+            }
+            else if (IsTextFileEmpty(filePath))
+            {
+                MessageBox.Show("Няма думи в файла думички.txt", "думички.txt липсва", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Hide();
+                new Intro().Show();
+            }
+            else
+            {
+                int lineCount = 0;
+                using (var reader = File.OpenText(filePath))
+                {
+                    while (reader.ReadLine() != null)
+                    {
+                        lineCount++;
+                    }
+                }
+                int randomLineNum = new Random(Guid.NewGuid().GetHashCode()).Next(1, lineCount - 1);
+                _word = File.ReadLines(filePath).ElementAtOrDefault(randomLineNum).ToString();
+                DisplayWordOnScreen();
+                StartHanging();
+            }      
         }
         private void Game_FormClosing(object sender, FormClosingEventArgs e)
         {
-
             Intro intro = new Intro();
             intro.Show();
             stickMan.Hide();
@@ -77,86 +106,83 @@ namespace Hangman
         }
         private void DisplayWordOnScreen()
         {
-            partsOfWord = new List<string>();
-            labels = new List<Label>();
-            pictureBoxes = new List<PictureBox>();
-            labels.Add(label1);
-            pictureBoxes.Add(pictureBox1);
-            partsOfWord = _word.Split(' ').ToList();
+        partsOfWord = new List<string>();
+        labels = new List<Label>();
+        pictureBoxes = new List<PictureBox>();
+        labels.Add(label1);
+        pictureBoxes.Add(pictureBox1);
+        partsOfWord = _word.Split(' ').ToList();
 
-            //put labels and pictureBoxes on screen
-            if (_word.Length > 3)
+        //put labels and pictureBoxes on screen
+            Label previousLabel = label1;
+            PictureBox previousPictureBox = pictureBox1;
+            int currentPartIndex = 0;
+            bool timeForNewLine = false;
+            for (int i = 1; i < _word.Length; i++)
             {
-                Label previousLabel = label1;
-                PictureBox previousPictureBox = pictureBox1;
-                int currentPartIndex = 0;
-                bool timeForNewLine = false;
-                for (int i = 1; i < _word.Length; i++)
+                if (timeForNewLine)
                 {
-                    if (timeForNewLine)
-                    {
-                        timeForNewLine = false;
-                    }
-                    if (_word[i - 1] == ' ')
-                    {
-                        currentPartIndex++;
-                        int sumPreviousPartsLength = 0;
-                        for (int j = 0; j < currentPartIndex; j++)
-                        {
-                            sumPreviousPartsLength += partsOfWord[j].Length + 1;
-                        }
-                        if (partsOfWord[currentPartIndex].Length + sumPreviousPartsLength > 17)
-                        {
-                            timeForNewLine = true;
-                        }
-                    }
-                    Label newLabel = new Label();
-                    Controls.Add(newLabel);
-                    panel1.Controls.Add(newLabel);
-                    labels.Add(newLabel);
-                    Font font = new("Segoe UI", 20);
-                    newLabel.Font = font;
-                    newLabel.Name = $"label{3 + i + 1}";
-                    newLabel.Text = "A";
-                    newLabel.AutoSize = true;
-                    if (timeForNewLine)
-                    {
-                        newLabel.Location = new Point(16, 157);
-                    }
-                    else
-                    {
-                        int newLabel_X = previousLabel.Location.X + 54;
-                        newLabel.Location = new Point(newLabel_X, previousLabel.Location.Y);
-
-                    }
-                    newLabel.Visible = true;
-                    newLabel.BringToFront();
-
-                    PictureBox newPictureBox = new PictureBox();
-                    Controls.Add(newPictureBox);
-                    panel1.Controls.Add(newPictureBox);
-                    pictureBoxes.Add(newPictureBox);
-                    newPictureBox.Image = previousPictureBox.Image;
-                    newPictureBox.SizeMode = previousPictureBox.SizeMode;
-                    newPictureBox.Size = new Size(previousPictureBox.Size.Width, previousPictureBox.Size.Height);
-                    newPictureBox.Name = $"addedPictureBox{i + 1}";
-                    if (timeForNewLine)
-                    {
-                        newPictureBox.Location = new Point(16, 174);
-                    }
-                    else
-                    {
-                        int newPictureBox_X = previousPictureBox.Location.X + 54;
-                        newPictureBox.Location = new Point(newPictureBox_X, previousPictureBox.Location.Y);
-                    }
-
-                    newPictureBox.Visible = true;
-                    newPictureBox.SendToBack();
-
-
-                    previousLabel = newLabel;
-                    previousPictureBox = newPictureBox;
+                    timeForNewLine = false;
                 }
+                if (_word[i - 1] == ' ')
+                {
+                    currentPartIndex++;
+                    int sumPreviousPartsLength = 0;
+                    for (int j = 0; j < currentPartIndex; j++)
+                    {
+                        sumPreviousPartsLength += partsOfWord[j].Length + 1;
+                    }
+                    if (partsOfWord[currentPartIndex].Length + sumPreviousPartsLength > 17)
+                    {
+                        timeForNewLine = true;
+                    }
+                }
+                Label newLabel = new Label();
+                Controls.Add(newLabel);
+                panel1.Controls.Add(newLabel);
+                labels.Add(newLabel);
+                Font font = new("Segoe UI", 20);
+                newLabel.Font = font;
+                newLabel.Name = $"label{3 + i + 1}";
+                newLabel.Text = "A";
+                newLabel.AutoSize = true;
+                if (timeForNewLine)
+                {
+                    newLabel.Location = new Point(16, 157);
+                }
+                else
+                {
+                    int newLabel_X = previousLabel.Location.X + 54;
+                    newLabel.Location = new Point(newLabel_X, previousLabel.Location.Y);
+
+                }
+                newLabel.Visible = true;
+                newLabel.BringToFront();
+
+                PictureBox newPictureBox = new PictureBox();
+                Controls.Add(newPictureBox);
+                panel1.Controls.Add(newPictureBox);
+                pictureBoxes.Add(newPictureBox);
+                newPictureBox.Image = previousPictureBox.Image;
+                newPictureBox.SizeMode = previousPictureBox.SizeMode;
+                newPictureBox.Size = new Size(previousPictureBox.Size.Width, previousPictureBox.Size.Height);
+                newPictureBox.Name = $"addedPictureBox{i + 1}";
+                if (timeForNewLine)
+                {
+                    newPictureBox.Location = new Point(16, 174);
+                }
+                else
+                {
+                    int newPictureBox_X = previousPictureBox.Location.X + 54;
+                    newPictureBox.Location = new Point(newPictureBox_X, previousPictureBox.Location.Y);
+                }
+
+                newPictureBox.Visible = true;
+                newPictureBox.SendToBack();
+
+
+                previousLabel = newLabel;
+                previousPictureBox = newPictureBox;
             }
             int currentPos = 0;
             //input letters
@@ -206,100 +232,105 @@ namespace Hangman
                 bool guessedAllLetters = labels.Where(l => l.Text.Equals("?")).ToArray().Length == 0;
                 if (guessedAllLetters)
                 {
-                    GuessedAllLetters(twoPlayerMode);
+                    GuessedAllLetters();
                 }
             }
             else
             {
-                WrongLetter(letter, twoPlayerMode);
+                WrongLetter(letter);
             }
             textBox1.Text = "";
         }
-
-        private void GuessedAllLetters(bool twoPlayerMode)
+        
+        private void GuessedAllLetters()
         {
-            if (twoPlayerMode) { GuessedAllLettersTwoPlayerMode(); }
-            else { GuessedAllLettersAIMode(); }
-        }
-
-        private void GuessedAllLettersTwoPlayerMode()
-        {
-            StringBuilder sb = new StringBuilder();
-
-            switch(_currentPlayer)
+            if (twoPlayerMode) 
             {
-                case 1:
-                    sb.Append("Играч 1, ");
-                    break;
-                case 2:
-                    sb.Append("Играч 2, ");
-                    break;
+                StringBuilder sb = new StringBuilder();
+
+                switch (_currentPlayer)
+                {
+                    case 1:
+                        sb.Append("Играч 1, ");
+                        break;
+                    case 2:
+                        sb.Append("Играч 2, ");
+                        break;
+                }
+                sb.Append("ти позна думата! Продължаване на играта?");
+                DialogResult dialog = MessageBox.Show(sb.ToString(), "Успех!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+                switch (dialog)
+                {
+                    case DialogResult.Yes:
+                        if (_currentPlayer == 1) { _currentPlayer = 2; _scoreBoard[1]++; }
+                        else { _currentPlayer = 1; _scoreBoard[2]++; }
+                        WordPrompt prompt = new WordPrompt(_currentPlayer, _scoreBoard);
+                        foreach (Form f in Application.OpenForms)
+                        {
+                            f.Hide();
+                        }
+                        this.Dispose();
+                        prompt.Show();
+                        break;
+                    case DialogResult.No:
+                        foreach (Form f in Application.OpenForms)
+                        {
+                            f.Hide();
+                        }
+                        this.Dispose();
+                        Intro intro = new Intro();
+                        intro.Show();
+                        break;
+                }
             }
-            sb.Append("ти позна думата! Продължаване на играта?");
-            DialogResult dialog = MessageBox.Show(sb.ToString(), "Успех!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+            else 
+            {
+                DialogResult dialog = MessageBox.Show("Ти позна думата! Нова дума?", "Успех", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                switch (dialog)
+                {
+                    case DialogResult.Yes:
+                        foreach (Form f in Application.OpenForms)
+                        {
+                            f.Hide();
+                        }
+                        this.Dispose();
+                        Game newGame = new Game();
+                        newGame.Show();
+                        
+                        break;
 
-            switch (dialog)
-            {
-                case DialogResult.Yes:
-                    if (_currentPlayer == 1) { _currentPlayer = 2; _scoreBoard[1]++; }
-                    else { _currentPlayer = 1; _scoreBoard[2]++; }
-                    WordPrompt prompt = new WordPrompt(_currentPlayer, _scoreBoard);
-                    foreach (Form f in Application.OpenForms)
-                    {
-                        f.Hide();
-                    }
-                    prompt.Show();
-                    break;
-                case DialogResult.No:
-                    foreach (Form f in Application.OpenForms)
-                    {
-                        f.Hide();
-                    }
-                    Intro intro = new Intro();
-                    intro.Show();
-                    break;
+                    case DialogResult.No:
+                        foreach (Form f in Application.OpenForms)
+                        {
+                            f.Hide();
+                        }
+                        this.Dispose();
+                        Intro intro = new Intro();
+                        intro.Show();
+                        break;
+                }
             }
         }
-        private void GuessedAllLettersAIMode()
+        private void WrongLetter(char letter)
         {
-            DialogResult dialog = MessageBox.Show("Ти позна думата! Нова дума?", "Успех", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-            switch (dialog)
+            bool playerLost = stickMan.Penalize();
+            if (playerLost)
             {
-                case DialogResult.Yes:
-                    Game newGame = new Game();
-                    newGame.Show();
-                    foreach (Form f in Application.OpenForms)
-                    {
-                        f.Hide();
-                    }
-                    break;
-                case DialogResult.No:
-                    foreach (Form f in Application.OpenForms)
-                    {
-                        f.Hide();
-                    }
-                    Intro intro = new Intro();
-                    intro.Show();
-                    break;
-            }
-        }
-        private void WrongLetter(char letter, bool twoPlayerMode)
-        {
-            if (twoPlayerMode)
-            {
-                WrongLetterTwoPlayerMode(letter);
+                PlayerLost();
             }
             else
             {
-                WrongLetterAIMode(letter);
+                if (!usedLetters.Contains(letter))
+                {
+                    usedLetters.Add(letter);
+                    usedLettersBox.Text = string.Join(", ", usedLetters);
+                }
             }
         }
-        
-        private void WrongLetterTwoPlayerMode(char letter)
+        private void PlayerLost()
         {
-            bool playerLost = stickMan.Penalize();
-
-            if(playerLost)
+            if (twoPlayerMode)
             {
                 StringBuilder stringBuilder = new StringBuilder();
 
@@ -312,8 +343,8 @@ namespace Hangman
                         stringBuilder.Append("Играч 2, ");
                         break;
                 }
-                stringBuilder.Append("ти позна думата! Продължаване на играта?");
-                DialogResult dialog = MessageBox.Show(stringBuilder.ToString(), "Успех!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                stringBuilder.Append("ти сгреши! Продължаване на играта?");
+                DialogResult dialog = MessageBox.Show(stringBuilder.ToString(), "Провал!", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
 
                 switch (dialog)
                 {
@@ -321,10 +352,11 @@ namespace Hangman
                         if (_currentPlayer == 1) { _currentPlayer = 2; _scoreBoard[2]++; }
                         else { _currentPlayer = 1; _scoreBoard[1]++; }
                         WordPrompt prompt = new WordPrompt(_currentPlayer, _scoreBoard);
-                        foreach(Form f in Application.OpenForms)
+                        foreach (Form f in Application.OpenForms)
                         {
                             f.Hide();
                         }
+                        this.Dispose();
                         prompt.Show();
                         break;
                     case DialogResult.No:
@@ -332,6 +364,7 @@ namespace Hangman
                         {
                             f.Hide();
                         }
+                        this.Dispose();
                         Intro intro = new Intro();
                         intro.Show();
                         break;
@@ -339,52 +372,80 @@ namespace Hangman
             }
             else
             {
-                if(!usedLetters.Contains(letter))
-                {
-                    usedLetters.Add(letter);
-                    usedLettersBox.Text = string.Join(", ", usedLetters);
-                }
-            }
-        }
-        
-        private void WrongLetterAIMode(char letter)
-        {
-            bool playerLost = stickMan.Penalize();
-
-            if (playerLost)
-            {
-                DialogResult dialog = MessageBox.Show("Ти загуби! Нов опит?", "Провал", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-                switch(dialog)
+                DialogResult dialog = MessageBox.Show("Ти загуби! Нов опит?", "Провал", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                switch (dialog)
                 {
                     case DialogResult.Yes:
-                        Game newGame = new Game();
-                        newGame.Show();
+
                         foreach (Form f in Application.OpenForms)
                         {
                             f.Hide();
                         }
+                        this.Dispose();
+                        Game newGame = new Game();
+                        newGame.Show();
                         break;
                     case DialogResult.No:
                         foreach (Form f in Application.OpenForms)
                         {
                             f.Hide();
                         }
+                        this.Dispose();
                         Intro intro = new Intro();
                         intro.Show();
                         break;
                 }
             }
-
-
         }
-        private void EnterPress(object sender, KeyEventArgs e)  
+        private void OpenGuessWindow(object sender, EventArgs e)
         {
-            if(e.KeyData == Keys.Enter)
-            {
-                Guess(this, new EventArgs());
-            }
+            guessWindow.ShowDialog();
+            return;
         }
+        public void GuessWholeWord()
+        {
+            string attempt = guessWindow.GuessedWord;
+            guessWindow.Hide();
+            if (attempt.Equals(_word))
+            {
+                for (int i = 0; i < _word.Length; i++)
+                {
+                    labels[i].Text = _word[i].ToString();
+                }
+                GuessedAllLetters();
+            }
+            else
+            {
+                stickMan.HangImmediately();
+                PlayerLost();
+            }
 
+        }
+        private static bool IsTextFileEmpty(string fileName)
+        {
+            var info = new FileInfo(fileName);
+            if (info.Length == 0)
+                return true;
 
+            if (info.Length < 6)
+            {
+                var content = File.ReadAllText(fileName);
+                return content.Length == 0;
+            }
+            return false;
+        }
+        private void StartHanging()
+        {
+            stickMan = new Stickman();
+            var myScreen = Screen.FromControl(this);
+            var mySecondScreen = Screen.AllScreens.FirstOrDefault(s => !s.Equals(myScreen)) ?? myScreen;
+
+            stickMan.Left = mySecondScreen.Bounds.Left;
+            stickMan.Top = mySecondScreen.Bounds.Top;
+            stickMan.Location = new Point(1050, 215);
+
+            this.Location = new Point(10, 160);
+            stickMan.Show();
+        }
     }
 }

@@ -43,8 +43,11 @@ namespace Hangman
             this.player2Score = new System.Windows.Forms.Label();
             this.usedLettersLabel = new System.Windows.Forms.Label();
             this.usedLettersBox = new System.Windows.Forms.TextBox();
+            this.scoreBoardPanel = new System.Windows.Forms.Panel();
+            this.knowTheWordButton = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.scoreBoardPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -87,7 +90,6 @@ namespace Hangman
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 23);
             this.textBox1.TabIndex = 2;
-            this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.EnterPress);
             // 
             // wordGuessLabel
             // 
@@ -114,7 +116,7 @@ namespace Hangman
             // 
             this.player1ScoreBoardLabel.AutoSize = true;
             this.player1ScoreBoardLabel.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.player1ScoreBoardLabel.Location = new System.Drawing.Point(47, 387);
+            this.player1ScoreBoardLabel.Location = new System.Drawing.Point(16, 39);
             this.player1ScoreBoardLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.player1ScoreBoardLabel.Name = "player1ScoreBoardLabel";
             this.player1ScoreBoardLabel.Size = new System.Drawing.Size(80, 25);
@@ -125,7 +127,7 @@ namespace Hangman
             // 
             this.player1Score.AutoSize = true;
             this.player1Score.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.player1Score.Location = new System.Drawing.Point(135, 379);
+            this.player1Score.Location = new System.Drawing.Point(104, 31);
             this.player1Score.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.player1Score.Name = "player1Score";
             this.player1Score.Size = new System.Drawing.Size(32, 37);
@@ -136,7 +138,7 @@ namespace Hangman
             // 
             this.something.AutoSize = true;
             this.something.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.something.Location = new System.Drawing.Point(164, 379);
+            this.something.Location = new System.Drawing.Point(133, 31);
             this.something.Name = "something";
             this.something.Size = new System.Drawing.Size(23, 37);
             this.something.TabIndex = 6;
@@ -146,7 +148,7 @@ namespace Hangman
             // 
             this.player2ScoreBoardLabel.AutoSize = true;
             this.player2ScoreBoardLabel.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.player2ScoreBoardLabel.Location = new System.Drawing.Point(224, 387);
+            this.player2ScoreBoardLabel.Location = new System.Drawing.Point(193, 39);
             this.player2ScoreBoardLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.player2ScoreBoardLabel.Name = "player2ScoreBoardLabel";
             this.player2ScoreBoardLabel.Size = new System.Drawing.Size(80, 25);
@@ -157,7 +159,7 @@ namespace Hangman
             // 
             this.player2Score.AutoSize = true;
             this.player2Score.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.player2Score.Location = new System.Drawing.Point(184, 379);
+            this.player2Score.Location = new System.Drawing.Point(153, 31);
             this.player2Score.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.player2Score.Name = "player2Score";
             this.player2Score.Size = new System.Drawing.Size(32, 37);
@@ -167,7 +169,7 @@ namespace Hangman
             // usedLettersLabel
             // 
             this.usedLettersLabel.AutoSize = true;
-            this.usedLettersLabel.Location = new System.Drawing.Point(682, 336);
+            this.usedLettersLabel.Location = new System.Drawing.Point(563, 336);
             this.usedLettersLabel.Name = "usedLettersLabel";
             this.usedLettersLabel.Size = new System.Drawing.Size(111, 15);
             this.usedLettersLabel.TabIndex = 9;
@@ -175,37 +177,61 @@ namespace Hangman
             // 
             // usedLettersBox
             // 
-            this.usedLettersBox.Location = new System.Drawing.Point(682, 362);
+            this.usedLettersBox.Location = new System.Drawing.Point(563, 362);
             this.usedLettersBox.Multiline = true;
             this.usedLettersBox.Name = "usedLettersBox";
+            this.usedLettersBox.ReadOnly = true;
             this.usedLettersBox.Size = new System.Drawing.Size(111, 52);
             this.usedLettersBox.TabIndex = 10;
             // 
+            // scoreBoardPanel
+            // 
+            this.scoreBoardPanel.Controls.Add(this.player2Score);
+            this.scoreBoardPanel.Controls.Add(this.player2ScoreBoardLabel);
+            this.scoreBoardPanel.Controls.Add(this.something);
+            this.scoreBoardPanel.Controls.Add(this.player1Score);
+            this.scoreBoardPanel.Controls.Add(this.player1ScoreBoardLabel);
+            this.scoreBoardPanel.Location = new System.Drawing.Point(31, 348);
+            this.scoreBoardPanel.Name = "scoreBoardPanel";
+            this.scoreBoardPanel.Size = new System.Drawing.Size(291, 96);
+            this.scoreBoardPanel.TabIndex = 11;
+            // 
+            // knowTheWordButton
+            // 
+            this.knowTheWordButton.Location = new System.Drawing.Point(712, 379);
+            this.knowTheWordButton.Name = "knowTheWordButton";
+            this.knowTheWordButton.Size = new System.Drawing.Size(112, 23);
+            this.knowTheWordButton.TabIndex = 12;
+            this.knowTheWordButton.Text = "Знам думата!";
+            this.knowTheWordButton.UseVisualStyleBackColor = true;
+            this.knowTheWordButton.Click += new System.EventHandler(this.OpenGuessWindow);
+            // 
             // Game
             // 
+            this.AcceptButton = this.guessButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(998, 447);
+            this.Controls.Add(this.knowTheWordButton);
+            this.Controls.Add(this.scoreBoardPanel);
             this.Controls.Add(this.usedLettersBox);
             this.Controls.Add(this.usedLettersLabel);
-            this.Controls.Add(this.player2Score);
-            this.Controls.Add(this.player2ScoreBoardLabel);
-            this.Controls.Add(this.something);
-            this.Controls.Add(this.player1Score);
-            this.Controls.Add(this.player1ScoreBoardLabel);
             this.Controls.Add(this.guessButton);
             this.Controls.Add(this.wordGuessLabel);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.panel1);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "Game";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            this.Text = "Hangman";
+            this.Text = "Бесеница";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Game_FormClosing);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.scoreBoardPanel.ResumeLayout(false);
+            this.scoreBoardPanel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -225,5 +251,7 @@ namespace Hangman
         private System.Windows.Forms.Label player2Score;
         private System.Windows.Forms.Label usedLettersLabel;
         private System.Windows.Forms.TextBox usedLettersBox;
+        private System.Windows.Forms.Panel scoreBoardPanel;
+        private System.Windows.Forms.Button knowTheWordButton;
     }
 }
