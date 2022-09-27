@@ -1,7 +1,7 @@
 ﻿
 namespace Hangman
 {
-    partial class Оptions
+    partial class ModeChoice
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@ namespace Hangman
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Оptions));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ModeChoice));
             this.label1 = new System.Windows.Forms.Label();
             this.startButton = new System.Windows.Forms.Button();
             this.onePlayer = new System.Windows.Forms.RadioButton();

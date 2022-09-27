@@ -24,7 +24,7 @@ namespace Hangman
         private Dictionary<int, int> _scoreBoard;
         private Stickman stickMan;
         private GuessWord guessWindow;
-
+        private UserSettings settings;
         //constructor used for twoPlayerMode
         public Game(int currentPlayer, string word, Dictionary<int, int> scoreBoard)
         {
@@ -32,12 +32,12 @@ namespace Hangman
             InitializeComponent();
             _word = null;
 
-            
+
             usedLetters = new List<char>();
             _word = word;
             _scoreBoard = scoreBoard;
             _currentPlayer = currentPlayer;
-            
+
             player1Score.Text = scoreBoard.ElementAt(0).Value.ToString();
             player2Score.Text = scoreBoard.ElementAt(1).Value.ToString();
             DisplayWordOnScreen();
@@ -62,40 +62,26 @@ namespace Hangman
 
             InitializeComponent();
             _word = null;
+            settings = new UserSettings();
             twoPlayerMode = false;
             usedLetters = new List<char>();
             stickMan = new Stickman();
             guessWindow = new GuessWord();
             scoreBoardPanel.Visible = false;
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "думички.txt");
+            string filePath = settings.FilePath;
 
-            if (!File.Exists(filePath))
+            int lineCount = 0;
+            using (var reader = File.OpenText(filePath))
             {
-                MessageBox.Show("Не мога да намеря файла, в който се съдържат думите. Съжалявам. :(", "думички.txt липсва", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Hide();
-                new Intro().Show();
-            }
-            else if (IsTextFileEmpty(filePath))
-            {
-                MessageBox.Show("Няма думи в файла думички.txt", "думички.txt липсва", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Hide();
-                new Intro().Show();
-            }
-            else
-            {
-                int lineCount = 0;
-                using (var reader = File.OpenText(filePath))
+                while (reader.ReadLine() != null)
                 {
-                    while (reader.ReadLine() != null)
-                    {
-                        lineCount++;
-                    }
+                    lineCount++;
                 }
-                int randomLineNum = new Random(Guid.NewGuid().GetHashCode()).Next(1, lineCount - 1);
-                _word = File.ReadLines(filePath).ElementAtOrDefault(randomLineNum).ToString();
-                DisplayWordOnScreen();
-                StartHanging();
-            }      
+            }
+            int randomLineNum = new Random(Guid.NewGuid().GetHashCode()).Next(1, lineCount - 1);
+            _word = File.ReadLines(filePath).ElementAtOrDefault(randomLineNum).ToString();
+            DisplayWordOnScreen();
+            StartHanging();
         }
         private void Game_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -106,14 +92,14 @@ namespace Hangman
         }
         private void DisplayWordOnScreen()
         {
-        partsOfWord = new List<string>();
-        labels = new List<Label>();
-        pictureBoxes = new List<PictureBox>();
-        labels.Add(label1);
-        pictureBoxes.Add(pictureBox1);
-        partsOfWord = _word.Split(' ').ToList();
+            partsOfWord = new List<string>();
+            labels = new List<Label>();
+            pictureBoxes = new List<PictureBox>();
+            labels.Add(label1);
+            pictureBoxes.Add(pictureBox1);
+            partsOfWord = _word.Split(' ').ToList();
 
-        //put labels and pictureBoxes on screen
+            //put labels and pictureBoxes on screen
             Label previousLabel = label1;
             PictureBox previousPictureBox = pictureBox1;
             int currentPartIndex = 0;
@@ -211,7 +197,7 @@ namespace Hangman
             char letter;
             try
             {
-                letter = char.Parse(textBox1.Text.ToString());
+                letter = char.Parse(textBox1.Text.ToString().ToLower());
             }
             catch (FormatException)
             {
@@ -241,10 +227,10 @@ namespace Hangman
             }
             textBox1.Text = "";
         }
-        
+
         private void GuessedAllLetters()
         {
-            if (twoPlayerMode) 
+            if (twoPlayerMode)
             {
                 StringBuilder sb = new StringBuilder();
 
@@ -259,12 +245,12 @@ namespace Hangman
                 }
                 sb.Append("ти позна думата! Продължаване на играта?");
                 DialogResult dialog = MessageBox.Show(sb.ToString(), "Успех!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-
+                if (_currentPlayer == 1) { _currentPlayer = 2; _scoreBoard[1]++; }
+                else { _currentPlayer = 1; _scoreBoard[2]++; }
                 switch (dialog)
                 {
                     case DialogResult.Yes:
-                        if (_currentPlayer == 1) { _currentPlayer = 2; _scoreBoard[1]++; }
-                        else { _currentPlayer = 1; _scoreBoard[2]++; }
+
                         WordPrompt prompt = new WordPrompt(_currentPlayer, _scoreBoard);
                         foreach (Form f in Application.OpenForms)
                         {
@@ -279,12 +265,13 @@ namespace Hangman
                             f.Hide();
                         }
                         this.Dispose();
+                        ShowResults();
                         Intro intro = new Intro();
                         intro.Show();
                         break;
                 }
             }
-            else 
+            else
             {
                 DialogResult dialog = MessageBox.Show("Ти позна думата! Нова дума?", "Успех", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                 switch (dialog)
@@ -297,7 +284,7 @@ namespace Hangman
                         this.Dispose();
                         Game newGame = new Game();
                         newGame.Show();
-                        
+
                         break;
 
                     case DialogResult.No:
@@ -345,6 +332,8 @@ namespace Hangman
                 }
                 stringBuilder.Append("ти сгреши! Продължаване на играта?");
                 DialogResult dialog = MessageBox.Show(stringBuilder.ToString(), "Провал!", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                if (_currentPlayer == 1) { _currentPlayer = 2; _scoreBoard[1]++; }
+                else { _currentPlayer = 1; _scoreBoard[2]++; }
 
                 switch (dialog)
                 {
@@ -365,6 +354,7 @@ namespace Hangman
                             f.Hide();
                         }
                         this.Dispose();
+                        ShowResults();
                         Intro intro = new Intro();
                         intro.Show();
                         break;
@@ -404,9 +394,9 @@ namespace Hangman
         }
         public void GuessWholeWord()
         {
-            string attempt = guessWindow.GuessedWord;
+            string attempt = guessWindow.GuessedWord.ToLower();
             guessWindow.Hide();
-            if (attempt.Equals(_word))
+            if (attempt.Equals(_word.ToLower()))
             {
                 for (int i = 0; i < _word.Length; i++)
                 {
@@ -421,18 +411,23 @@ namespace Hangman
             }
 
         }
-        private static bool IsTextFileEmpty(string fileName)
+        private void ShowResults()
         {
-            var info = new FileInfo(fileName);
-            if (info.Length == 0)
-                return true;
-
-            if (info.Length < 6)
+            StringBuilder sb = new StringBuilder();
+            if (_scoreBoard[1] > _scoreBoard[2])
             {
-                var content = File.ReadAllText(fileName);
-                return content.Length == 0;
+                sb.Append("Играч 1 печели!");
             }
-            return false;
+            else if (_scoreBoard[1] == _scoreBoard[2])
+            {
+                sb.Append("Наравно сте!");
+            }
+            else
+            {
+                sb.Append("Играч 2 печели!");
+            }
+
+            MessageBox.Show(sb.ToString(), $"{_scoreBoard[1]}-{_scoreBoard[2]}", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         private void StartHanging()
         {

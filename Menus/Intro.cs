@@ -20,7 +20,7 @@ namespace Hangman
 
         private void startButton_Click(object sender, EventArgs e)
         {
-            Оptions options = new Оptions();
+            ModeChoice options = new ModeChoice();
             options.Show();
         }
         private void exitButton_Click(object sender, EventArgs e)
@@ -30,6 +30,12 @@ namespace Hangman
         private void Intro_FormClosing(object sender, FormClosingEventArgs e)
         {
             Process.GetCurrentProcess().Kill();
+        }
+
+        private void optionsButton_Click(object sender, EventArgs e)
+        {
+            Options options = new Options();
+            options.Show();
         }
     }
 }

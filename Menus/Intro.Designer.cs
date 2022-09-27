@@ -33,12 +33,13 @@ namespace Hangman
             this.startButton = new System.Windows.Forms.Button();
             this.exitButton = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.optionsButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // startButton
             // 
-            this.startButton.Location = new System.Drawing.Point(47, 352);
+            this.startButton.Location = new System.Drawing.Point(47, 355);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(197, 50);
             this.startButton.TabIndex = 0;
@@ -48,7 +49,7 @@ namespace Hangman
             // 
             // exitButton
             // 
-            this.exitButton.Location = new System.Drawing.Point(391, 352);
+            this.exitButton.Location = new System.Drawing.Point(391, 355);
             this.exitButton.Name = "exitButton";
             this.exitButton.Size = new System.Drawing.Size(197, 50);
             this.exitButton.TabIndex = 1;
@@ -59,17 +60,28 @@ namespace Hangman
             // pictureBox1
             // 
             this.pictureBox1.Image = global::Hangman.Properties.Resources.stupidlogo;
-            this.pictureBox1.Location = new System.Drawing.Point(47, 40);
+            this.pictureBox1.Location = new System.Drawing.Point(47, 38);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(541, 241);
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
+            // 
+            // optionsButton
+            // 
+            this.optionsButton.Location = new System.Drawing.Point(279, 369);
+            this.optionsButton.Name = "optionsButton";
+            this.optionsButton.Size = new System.Drawing.Size(75, 23);
+            this.optionsButton.TabIndex = 3;
+            this.optionsButton.Text = "Настройки";
+            this.optionsButton.UseVisualStyleBackColor = true;
+            this.optionsButton.Click += new System.EventHandler(this.optionsButton_Click);
             // 
             // Intro
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(642, 450);
+            this.Controls.Add(this.optionsButton);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.exitButton);
             this.Controls.Add(this.startButton);
@@ -88,6 +100,7 @@ namespace Hangman
         private System.Windows.Forms.Button startButton;
         private System.Windows.Forms.Button exitButton;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Button optionsButton;
     }
 }
 

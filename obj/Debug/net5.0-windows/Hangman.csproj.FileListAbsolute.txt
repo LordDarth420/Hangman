@@ -21,4 +21,5 @@ C:\Users\Niki\source\repos\Hangman\obj\Debug\net5.0-windows\Hangman.Game.resourc
 C:\Users\Niki\source\repos\Hangman\obj\Debug\net5.0-windows\Hangman.WordPrompt.resources
 C:\Users\Niki\source\repos\Hangman\obj\Debug\net5.0-windows\Hangman.Stickman.resources
 C:\Users\Niki\source\repos\Hangman\obj\Debug\net5.0-windows\Hangman.GuessWord.resources
-C:\Users\Niki\source\repos\Hangman\obj\Debug\net5.0-windows\Hangman.Оptions.resources
+C:\Users\Niki\source\repos\Hangman\obj\Debug\net5.0-windows\Hangman.ModeChoice.resources
+C:\Users\Niki\source\repos\Hangman\obj\Debug\net5.0-windows\Hangman.Options.resources
